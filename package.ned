@@ -13,7 +13,9 @@ simple Source
 simple Server
 {
     parameters:
+        volatile double mi;
         volatile double service_time;
+        volatile int buffer_max;
     gates:
         input in;
         output out;

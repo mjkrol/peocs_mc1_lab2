@@ -1,4 +1,5 @@
 #include <omnetpp.h>
+#include <stdio.h>
 
 using namespace omnetpp;
 
@@ -9,16 +10,18 @@ class Source : public cSimpleModule
 protected:
    virtual void initialize();
    virtual void handleMessage(cMessage *msgin);
+
+private:
+   void SendJob();
 };
 
 Define_Module(Source);
 
 void Source::initialize()
 {
-   for(int i=0;i<(int)par("initial_queue");i++) //this loop builds the initial queue
+   for (int i = 0; i < (int)par("initial_queue"); i++)
    {
-      cMessage *job = new cMessage(" Job");
-      send(job, "out" );
+      SendJob();
    }
 
    send_event = new cMessage("Send!");
@@ -27,8 +30,13 @@ void Source::initialize()
 
 void Source::handleMessage(cMessage *msgin) //send next job
 {
-   cMessage *job = new cMessage(" Job");
-   send(job, "out" );
-   scheduleAt(simTime()+par("interarrival_time"), send_event); //schedule next send event
+   SendJob();
+   simtime_t now = simTime();
+   simtime_t next = now + par("interarrival_time");
+   scheduleAt(next, send_event);
 }
 
+void Source::SendJob()
+{
+   send(new cMessage(" Job"), "out");
+}
