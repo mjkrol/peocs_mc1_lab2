@@ -16,6 +16,10 @@ private:
    // mean time in queue statistics
    cStdDev serviceTimeStats;
 
+   // packet loss statistics
+   uint64_t packetsTotal;
+   uint64_t packetsLost;
+
 protected:
    virtual void initialize();
    virtual void handleMessage(cMessage *msgin);
@@ -33,6 +37,8 @@ void Server::initialize()
    scheduleAt(simTime() + 1, sampleQueueLength);
    queueStats.setCellSize(1);
    queueStats.setRange(0, N + 1);
+   packetsTotal = 0;
+   packetsLost = 0;
 }
 
 
@@ -64,21 +70,17 @@ void Server::handleMessage(cMessage *msgin)
          scheduleAt(now + par("service_time"), departure);
       }
       queue.insert(msgin); //put job at the end of the queue
+      packetsTotal++;
    } else {
       // Queue full, drop the job
       delete msgin;
+      packetsLost++;
+      packetsTotal++;
    }
 }
 
 void Server::finish()
 {
    EV << "lambda = 1, mi = " << (double)par("mi") << ", N = " << N << endl;
-   EV << "Queue len, max:    " << queueStats.getMax() << endl;
-   EV << "Queue len, mean:   " << queueStats.getMean() << endl;
-   EV << "Queue len, stddev: " << queueStats.getStddev() << endl;
-   for (int i = 0; i <= 2; i++) {
-      EV << "P(" << i << ") = " << queueStats.getCellValue(i) / queueStats.getCount() << endl;
-   }
-   EV << "P(" << N << ") = " << queueStats.getCellValue(N) / queueStats.getCount() << endl;
-   EV << "Mean service time: " << serviceTimeStats.getMean() << endl;
+   EV << "Packets lost: " << packetsLost * 100 / packetsTotal << "%" << endl;
 }
