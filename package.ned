@@ -2,8 +2,6 @@ simple Source
 {
     parameters:
         volatile double interarrival_time;
-        volatile int initial_queue;
-
     gates:
         output out;
 }
@@ -17,7 +15,7 @@ simple Server
         volatile double service_time;
         volatile int buffer_max;
     gates:
-        input in;
+        input in[];
         output out;
 }
 
@@ -36,7 +34,11 @@ module GG1
     parameters:
 
     submodules:
-        source: Source {
+        source1: Source {
+            parameters:
+                @display("i=block/source");
+        }
+        source2: Source {
             parameters:
                 @display("i=block/source");
         }
@@ -49,7 +51,8 @@ module GG1
                 @display("i=block/sink");
         }
     connections:
-        source.out --> {  } --> server.in;
+        source1.out --> {  } --> server.in++;
+        source2.out --> {  } --> server.in++;
         server.out --> {  } --> sink.in;
 }
 

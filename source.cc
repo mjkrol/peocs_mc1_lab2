@@ -19,11 +19,6 @@ Define_Module(Source);
 
 void Source::initialize()
 {
-   for (int i = 0; i < (int)par("initial_queue"); i++)
-   {
-      SendJob();
-   }
-
    send_event = new cMessage("Send!");
    scheduleAt(par("interarrival_time"), send_event);
 }
@@ -38,5 +33,5 @@ void Source::handleMessage(cMessage *msgin) //send next job
 
 void Source::SendJob()
 {
-   send(new cMessage(" Job"), "out");
+   send(new cMessage((std::string(getName()) + " Job").c_str()), "out");
 }
