@@ -82,10 +82,5 @@ void Server::handleMessage(cMessage *msgin)
 void Server::finish()
 {
    EV << "lambda = 1, mi = " << 1.0/(double)par("mi") << ", N = " << N << endl;
-   EV << "Queue mean:   " << queueStats.getMean() << endl;
-   EV << "Mean service time: " << serviceTimeStats.getMean() << endl;
-   for (int i = 0; i <= 2; i++) {
-      EV << "P(" << i << ") = " << queueStats.getCellValue(i) / queueStats.getCount() << endl;
-   }
-   EV << "P(" << N << ") = " << queueStats.getCellValue(N) / queueStats.getCount() << endl;
+   EV << "Packets lost: " << (double)packetsLost * 100 / packetsTotal << "%" << endl;
 }
