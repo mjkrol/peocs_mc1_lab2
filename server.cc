@@ -1,4 +1,6 @@
 #include <omnetpp.h>
+#include <iostream>
+#include <fstream>
 
 using namespace omnetpp;
 
@@ -81,6 +83,11 @@ void Server::handleMessage(cMessage *msgin)
 
 void Server::finish()
 {
+   std::ofstream f;
+   f.open("gg1-zadanie-3.txt", std::ios::app);
    EV << "lambda = 1, mi = " << 1.0/(double)par("mi") << ", N = " << N << endl;
-   EV << "Packets lost: " << (double)packetsLost * 100 / packetsTotal << "%" << endl;
+   EV << "Queue mean:   " << queueStats.getMean() << endl;
+   f << "lambda = 1, mi = " << 1.0/(double)par("mi") << ", N = " << N << endl;
+   f << "Queue mean:   " << queueStats.getMean() << endl;
+   f.close();
 }

@@ -38,6 +38,10 @@ module GG1
             parameters:
                 @display("i=block/source");
         }
+        source2: Source {
+            parameters:
+                @display("i=block/source");
+        }
         server: Server {
             parameters:
                 @display("i=block/queue");
@@ -48,6 +52,7 @@ module GG1
         }
     connections:
         source1.out --> {  } --> server.in++;
+        source2.out --> {  } --> server.in++;
         server.out --> {  } --> sink.in;
 }
 
