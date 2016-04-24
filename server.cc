@@ -7,7 +7,7 @@ using namespace omnetpp;
 class Server : public cSimpleModule
 {
 private:
-   int buffer_max;
+   int N;
    cQueue queue;	 //the queue; first job in the queue is being serviced
    cMessage *departure; //message-reminder of the end of service (job departure)
 
@@ -33,18 +33,14 @@ Define_Module(Server);
 
 void Server::initialize()
 {
-   buffer_max = par("buffer_max");
+   N = par("buffer_max");
    departure = new cMessage("Departure");
    sampleQueueLength = new cMessage("SampleQueueLength");
    scheduleAt(simTime() + 1, sampleQueueLength);
    queueStats.setCellSize(1);
-   queueStats.setRange(0, buffer_max + 1);
+   queueStats.setRange(0, N + 1);
    packetsTotal = 0;
    packetsLost = 0;
-   for (int i = 0; i < (int)par("initial_queue"); i++)
-   {
-      send(new cMessage((std::string(getName()) + " Job").c_str()), "out");
-   }
 }
 
 
@@ -66,10 +62,10 @@ void Server::handleMessage(cMessage *msgin)
    }
    else if (msgin == sampleQueueLength)
    {
-      queueStats.collect(queue.getLength() > 0 ? queue.getLength() - 1 : 0);
+      queueStats.collect(queue.getLength());
       scheduleAt(now + 1, sampleQueueLength);
    }
-   else if (queue.getLength() < buffer_max)
+   else if (queue.getLength() < N)
    {
       if (queue.isEmpty())
       {
@@ -87,11 +83,6 @@ void Server::handleMessage(cMessage *msgin)
 
 void Server::finish()
 {
-   std::ofstream f;
-   f.open("gg1-zadanie-5.txt", std::ios::app);
-   EV << "N = " << buffer_max << endl;
-   EV << getName() << " queue mean:   " << queueStats.getMean() << endl;
-   f << "N = " << buffer_max << endl;
-   f << getName() << " queue mean:   " << queueStats.getMean() << endl;
-   f.close();
+   EV << "mi = " << 1.0/(double)par("mi") << ", N = " << N << endl;
+   EV << "Mean service time: " << serviceTimeStats.getMean() << endl;
 }
