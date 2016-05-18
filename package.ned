@@ -2,6 +2,7 @@ simple Source
 {
     parameters:
         volatile double interarrival_time;
+        volatile int kind;
     gates:
         output out;
 }
@@ -11,12 +12,14 @@ simple Source
 simple Server
 {
     parameters:
-        volatile double mi;
-        volatile double service_time;
-        volatile int buffer_max;
+        volatile double service_time_A;
+        volatile double service_time_B;
+        volatile int N;
+        volatile double probability_0;
+        volatile int priority;
     gates:
         input in[];
-        output out;
+        output out[];
 }
 
 
@@ -24,7 +27,7 @@ simple Server
 simple Sink
 {
     gates:
-        input in;
+        input in[];
 }
 
 
@@ -34,15 +37,23 @@ module GG1
     parameters:
 
     submodules:
-        source1: Source {
+        sourceA: Source {
             parameters:
                 @display("i=block/source");
         }
-        source2: Source {
+        sourceB: Source {
             parameters:
                 @display("i=block/source");
         }
-        server: Server {
+        fifo1: Server {
+            parameters:
+                @display("i=block/queue");
+        }
+        fifo2: Server {
+            parameters:
+                @display("i=block/queue");
+        }
+        fifo3: Server {
             parameters:
                 @display("i=block/queue");
         }
@@ -51,9 +62,12 @@ module GG1
                 @display("i=block/sink");
         }
     connections:
-        source1.out --> {  } --> server.in++;
-        source2.out --> {  } --> server.in++;
-        server.out --> {  } --> sink.in;
+        sourceA.out --> {  } --> fifo1.in++;
+        sourceB.out --> {  } --> fifo1.in++;
+        fifo1.out++ --> {  } --> fifo2.in++;
+        fifo1.out++ --> {  } --> fifo3.in++;
+        fifo2.out++ --> {  } --> sink.in++;
+        fifo3.out++ --> {  } --> sink.in++;
 }
 
 //////////////////////////////////////////////////

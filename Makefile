@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for gg1
+# OMNeT++/OMNEST Makefile for peocs_mc1_lab2
 #
 # This file was generated with the command:
 #  opp_makemake -f -u cmdenv
 #
 
 # Name of target to be created (-o option)
-TARGET = gg1$(EXE_SUFFIX)
+TARGET = peocs_mc1_lab2$(EXE_SUFFIX)
 
 # User interface (uncomment one) (-u option)
 #USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LIBS)
@@ -114,7 +114,7 @@ smheaders: $(SMFILES:.sm=_sm.h)
 clean:
 	$(qecho) Cleaning...
 	$(Q)-rm -rf $O
-	$(Q)-rm -f gg1 gg1.exe libgg1.so libgg1.a libgg1.dll libgg1.dylib
+	$(Q)-rm -f peocs_mc1_lab2 peocs_mc1_lab2.exe libpeocs_mc1_lab2.so libpeocs_mc1_lab2.a libpeocs_mc1_lab2.dll libpeocs_mc1_lab2.dylib
 	$(Q)-rm -f ./*_m.cc ./*_m.h ./*_sm.cc ./*_sm.h
 
 cleanall: clean
@@ -125,6 +125,7 @@ depend:
 	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
-$O/server.o: server.cc
+$O/server.o: server.cc \
+  ./histogram.h
 $O/sink.o: sink.cc
 $O/source.o: source.cc

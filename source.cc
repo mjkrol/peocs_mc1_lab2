@@ -33,5 +33,7 @@ void Source::handleMessage(cMessage *msgin) //send next job
 
 void Source::SendJob()
 {
-   send(new cMessage((std::string(getName()) + " Job").c_str()), "out");
+   cMessage *msg = new cMessage((std::string(getName()) + " Job").c_str());
+   msg->setKind((int)par("kind"));
+   send(msg, "out");
 }
